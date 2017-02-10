@@ -6,13 +6,13 @@ function Timeseries(){
 	var _accessor = function(d){
 		return d.startTime;
 	};
+	var W, H, M ={t:30,r:40,b:30,l:40};
 
 	var exports = function(selection){
 		//Set initial internal values
 		//Some of these will be based on the incoming selection argument
-		var M = {t:30,r:40,b:30,l:40},
-			W = selection.node().clientWidth - M.l - M.r,
-			H = selection.node().clientHeight - M.t - M.b;
+		W = W || selection.node().clientWidth - M.l - M.r;
+		H = H || selection.node().clientHeight - M.t - M.b;
 		var arr = selection.datum()?selection.datum():[];
 
 		//Histogram layout
@@ -60,9 +60,7 @@ function Timeseries(){
 			.data([dayBins])
 
 		var svgEnter = svg.enter()
-			.append('svg'); //ENTER
-		svgEnter
-			.merge(svg) //ENTER + UPDATE
+			.append('svg') //ENTER
 			.attr('width', W + M.l + M.r)
 			.attr('height', H + M.t + M.b);
 
@@ -71,7 +69,7 @@ function Timeseries(){
 		plotEnter.append('path').attr('class','area');
 		plotEnter.append('g').attr('class','axis axis-y');
 		plotEnter.append('path').attr('class','line');
-		plotEnter.append('g').attr('class','axis axis-x').attr('transform','translate(0,'+H+')');
+		plotEnter.append('g').attr('class','axis axis-x');
 
 		//Update
 		var plot = svg.merge(svgEnter)
@@ -83,7 +81,9 @@ function Timeseries(){
 			.attr('d',line);
 		plot.select('.axis-y').transition()
 			.call(axisY);
-		plot.select('.axis-x').transition()
+		plot.select('.axis-x')
+			.attr('transform','translate(0,'+H+')')
+			.transition()
 			.call(axisX);
 	}
 
