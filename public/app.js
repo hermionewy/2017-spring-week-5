@@ -5,10 +5,15 @@ d3.queue()
 	.defer(d3.csv,'./data/hubway_stations.csv',parseStations)
 	.await(dataLoaded);
 
+var dispatch = d3.dispatch('cf:filter');
+
 function dataLoaded(err,trips,stations){
 	
+	//Data model
 	var cf = crossfilter(trips);
-	var tripsByStartTime = cf.dimension(function(d){return d.startTime});
+	var tripsByStartTime = cf.dimension(function(d){return d.startTime}),
+		tripsByStartStation = cf.dimension(function(d){return d.startStn}),
+		tripsByEndStation = cf.dimension(function(d){return d.endStn});
 
 	//Time series module
 	d3.select('#plot1').datum(tripsByStartTime.top(Infinity))
@@ -27,19 +32,27 @@ function dataLoaded(err,trips,stations){
 	//UI module
 	var startStationList = StationList()
 		.on('update',function(id){
-			console.log('app:update start station:'+id);
+			tripsByStartStation.filter(id);
+			dispatch.call('cf:filter');
 		});
 	var endStationList = StationList()
 		.on('update',function(id){
-			console.log('app:update end station:'+id);
+			tripsByEndStation.filter(id);
+			dispatch.call('cf:filter');
 		});
 	d3.select('#start-station').datum(stations).call(startStationList);
 	d3.select('#end-station').datum(stations).call(endStationList);
 
-
-
-
 	//How do you make them all communicate with each other?
+	dispatch.on('cf:filter',function(){
+		//Time series module
+		d3.select('#plot1').datum(tripsByStartTime.top(Infinity))
+			.call(Timeseries());
+		d3.select('#plot2').datum(tripsByStartTime.top(Infinity))
+			.call(piechartByUserType);
+		d3.select('#plot3').datum(tripsByStartTime.top(Infinity).filter(function(d){return d.userGender}))
+			.call(piechartByUserGender);
+	});
 
 }
 
