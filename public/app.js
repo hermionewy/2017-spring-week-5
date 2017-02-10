@@ -25,8 +25,14 @@ function dataLoaded(err,trips,stations){
 		.call(piechartByUserGender);
 
 	//UI module
-	var startStationList = StationList();
-	var endStationList = StationList();
+	var startStationList = StationList()
+		.on('update',function(id){
+			console.log('app:update start station:'+id);
+		});
+	var endStationList = StationList()
+		.on('update',function(id){
+			console.log('app:update end station:'+id);
+		});
 	d3.select('#start-station').datum(stations).call(startStationList);
 	d3.select('#end-station').datum(stations).call(endStationList);
 

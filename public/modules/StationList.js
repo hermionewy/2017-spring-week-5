@@ -1,4 +1,5 @@
 function StationList(){
+	var _dispatch = d3.dispatch('update');
 
 	var exports = function(selection){
 		var arr = selection.datum();
@@ -14,6 +15,7 @@ function StationList(){
 			.on('click',function(d){
 				d3.event.preventDefault();
 				console.log('StationList:select:'+d.id);
+				_dispatch.call('update',this,d.id);
 			});
 		menuItem.exit().remove();
 
@@ -24,8 +26,13 @@ function StationList(){
 			.html('All stations')
 			.on('click',function(d){
 				d3.event.preventDefault();
-				console.log('StationList:select:'+'none');
+				_dispatch.call('update',this,null);
 			});
+	}
+
+	exports.on = function(){
+		_dispatch.on.apply(_dispatch,arguments);
+		return this;
 	}
 
 	return exports;
