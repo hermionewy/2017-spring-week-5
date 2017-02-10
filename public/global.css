@@ -28,7 +28,14 @@ body{
 
 
 /*pie-charts*/
-
+.pie-chart .slice line{
+	fill:none;
+	stroke:rgb(80,80,80);
+	stroke-width:1px;
+}
+.pie-chart .slice .text{
+	fill:(80,80,80);
+}
 
 /*time-series*/
 .time-series .line{

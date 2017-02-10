@@ -15,15 +15,25 @@ function dataLoaded(err,trips,stations){
 		.call(Timeseries());
 
 	//Pie chart module: showing user type breakdown
-	
+	var piechartByUserType = Piechart().value(function(d){return d.userType});
+	d3.select('#plot2').datum(tripsByStartTime.top(Infinity))
+		.call(piechartByUserType);
 
 	//Pie chart module: showing user gender breakdown
-
+	var piechartByUserGender = Piechart().value(function(d){return d.userGender});
+	d3.select('#plot3').datum(tripsByStartTime.top(Infinity).filter(function(d){return d.userGender}))
+		.call(piechartByUserGender);
 
 	//UI module
+	var startStationList = StationList();
+	var endStationList = StationList();
+	d3.select('#start-station').datum(stations).call(startStationList);
+	d3.select('#end-station').datum(stations).call(endStationList);
 
 
-	//How do you make them all communicate?
+
+
+	//How do you make them all communicate with each other?
 
 }
 
