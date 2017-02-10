@@ -13,8 +13,8 @@ function Piechart(){
 
 	var exports = function(selection){
 		var arr = selection.datum();
-		w = selection.node().clientWidth;
-		h = selection.node().clientHeight;
+		w = w || selection.node().clientWidth;
+		h = h || selection.node().clientHeight;
 		_outerRadius = Math.min(w,h)/2 - 60;
 		_innerRadius = 8;
 
@@ -38,8 +38,7 @@ function Piechart(){
 
 		//Append or update DOM structure
 		var svg = selection.selectAll('svg').data([arrPie]),
-			svgEnter = svg.enter().append('svg');
-		svgEnter.merge(svg)
+			svgEnter = svg.enter().append('svg')
 			.attr('width',w+m.l+m.r)
 			.attr('height',h+m.t+m.b);
 
